@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "todo-api-final"
+resolve_s3 = true
+s3_prefix = "todo-api-final"
+region = "us-east-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "DatabaseEndpoint=\"db-aws-sam-cli.c3ce4qee8z3b.us-east-2.rds.amazonaws.com\" DatabaseUsername=\"zambrin\" DatabaseName=\"postgres\""
+image_repositories = []

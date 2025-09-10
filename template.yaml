@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Projeto To-Do List com Spring Boot, Lambda e RDS
+
+# Parâmetros que vamos informar na hora do deploy
+Parameters:
+  DatabaseEndpoint:
+    Type: String
+    Description: O endpoint do banco de dados RDS.
+  DatabaseUsername:
+    Type: String
+    Description: O nome de usuário do banco.
+  DatabasePassword:
+    Type: String
+    NoEcho: true
+    Description: A senha do banco de dados.
+  DatabaseName:
+    Type: String
+    Default: 'postgres'
+    Description: O nome do banco de dados.
+
+# Configurações globais para todas as funções
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024 # Spring Boot precisa de mais memória
+
+Resources:
+  # Nossa função Lambda principal
+  TodoApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      VpcConfig: # Configuração para conectar na VPC onde está o RDS
+        SecurityGroupIds:
+          - sg-0bff46fce826ccc22  # Substitua pelo seu ID real
+        SubnetIds:
+          - subnet-02c61c5665291c31c  # Substitua pelos seus IDs reais
+          - subnet-0c6a67cdbc7a5b635
+      CodeUri: .
+      Handler: br.com.todolist.StreamLambdaHandler::handleRequest
+      Runtime: java21
+      Architectures:
+        - x86_64
+      # Permissão para a Lambda acessar o banco de dados
+      Policies:
+        - AmazonRDSFullAccess # Para simplificar, damos acesso total ao RDS
+      # Variáveis de ambiente que serão lidas pelo application.properties
+      Environment:
+        Variables:
+          DB_URL: !Sub 'jdbc:postgresql://${DatabaseEndpoint}:5432/${DatabaseName}'
+          DB_USERNAME: !Ref DatabaseUsername
+          DB_PASSWORD: !Ref DatabasePassword
+      # Gatilho: define que essa função será acionada por uma API
+      Events:
+        ApiGatewayProxy:
+          Type: Api
+          Properties:
+            Path: /{proxy+} # Roteia qualquer caminho para nossa função
+            Method: ANY    # Aceita qualquer método (GET, POST, etc.)
+
+# Saídas que o deploy vai nos mostrar no final
+Outputs:
+  TodoApiUrl:
+    Description: "URL do endpoint da API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/" # O ID real será preenchido pelo CloudFormation
