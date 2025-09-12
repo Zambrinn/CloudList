@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.todolist.aws_lambda_todo.dto.TodoRequestDTO;
 import br.com.todolist.aws_lambda_todo.dto.TodoResponseDTO;
 import br.com.todolist.aws_lambda_todo.service.TodoService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/todos")
@@ -21,20 +25,24 @@ public class TodoController {
     private TodoService todoService;
 
     @PostMapping
-    public ResponseEntity<TodoResponseDTO> create(@RequestBody TodoRequestDTO requestDTO) {
-        TodoResponseDTO createdTodo = todoService.create(requestDTO);
-        return ResponseEntity.ok(createdTodo);
+    public ResponseEntity<TodoResponseDTO> create(@Valid @RequestBody TodoRequestDTO requestDTO) {
+        return ResponseEntity.ok(todoService.create(requestDTO));
     }
 
     @GetMapping
     public ResponseEntity<List<TodoResponseDTO>> listAll() {
-        List<TodoResponseDTO> allDTOs = todoService.listAll();
-        return ResponseEntity.ok(allDTOs);
+        return ResponseEntity.ok(todoService.listAll());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TodoResponseDTO> update(@PathVariable Long id,
+    @Valid @RequestBody TodoRequestDTO requestDTO) {
+        return ResponseEntity.ok(todoService.update(id, requestDTO));
+    }
 
-
-
-
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestBody TodoRequestDTO requestDTO) {
+        todoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

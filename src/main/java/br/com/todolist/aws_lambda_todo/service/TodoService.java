@@ -1,7 +1,6 @@
 package br.com.todolist.aws_lambda_todo.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.todolist.aws_lambda_todo.dto.TodoRequestDTO;
 import br.com.todolist.aws_lambda_todo.dto.TodoResponseDTO;
+import br.com.todolist.aws_lambda_todo.exception.ResourceNotFoundException;
 import br.com.todolist.aws_lambda_todo.model.Todo;
 import br.com.todolist.aws_lambda_todo.repository.TodoRepository;
 
@@ -34,22 +34,20 @@ public class TodoService {
             .collect(Collectors.toList());
     }
 
-    public Optional<TodoResponseDTO> update(Long id, TodoRequestDTO todoRequestDTO) {
-        return todoRepository.findById(id)
-        .map(existingTodo -> {
-            existingTodo.setDescription(todoRequestDTO.getDescription());
-            existingTodo.setDone(todoRequestDTO.isDone());
-            Todo updatedTodo = todoRepository.save(existingTodo);
-            return convertToResponseDTO(updatedTodo);
-        });
+    public TodoResponseDTO update(Long id, TodoRequestDTO todoRequestDTO) {
+        Todo existingTodo = todoRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com o ID: " + id));
+
+        existingTodo.setDescription(todoRequestDTO.getDescription());
+        existingTodo.setDone(todoRequestDTO.isDone());
+        Todo updatedTodo = todoRepository.save(existingTodo);
+        return convertToResponseDTO(updatedTodo);
     }
 
-    public boolean delete(Long id) {
-        if (todoRepository.existsById(id)) {
-            todoRepository.deleteById(id);
-            return true;
+    public void delete(Long id) {
+        if (!todoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Item não encontrado com o id: " + id);
         }
-        return false;
     }
 
     private TodoResponseDTO convertToResponseDTO(Todo todo) {
