@@ -2,9 +2,7 @@ package br.com.todolist.aws_lambda_todo.dto;
 
 import java.util.UUID;
 
-public record TodoResponseDTO(
+public record UserResponseDTO(
         UUID id,
-        String description,
-        boolean done) {
-
+        String username) {
 }
