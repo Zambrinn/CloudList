@@ -35,12 +35,12 @@ public class UserController {
        return ResponseEntity.ok(userService.listAll());
     }
 
-    @PutMapping("/api/v1/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody UserRequestDTO requestDTO) {
         return ResponseEntity.ok(userService.update(id, requestDTO));
     }
 
-    @DeleteMapping("/api/v1/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<UserResponseDTO> delete(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
