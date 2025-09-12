@@ -1,6 +1,7 @@
 package br.com.todolist.aws_lambda_todo.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import br.com.todolist.aws_lambda_todo.service.TodoService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/todos")
+@RequestMapping("/api/v1/todos")
 public class TodoController {
     @Autowired
     private TodoService todoService;
@@ -35,13 +36,13 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoResponseDTO> update(@PathVariable Long id,
-    @Valid @RequestBody TodoRequestDTO requestDTO) {
+    public ResponseEntity<TodoResponseDTO> update(@PathVariable UUID id,
+            @Valid @RequestBody TodoRequestDTO requestDTO) {
         return ResponseEntity.ok(todoService.update(id, requestDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestBody TodoRequestDTO requestDTO) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id, @RequestBody TodoRequestDTO requestDTO) {
         todoService.delete(id);
         return ResponseEntity.noContent().build();
     }
