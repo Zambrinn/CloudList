@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.todolist.aws_lambda_todo.dto.UserRequestDTO;
@@ -19,13 +20,20 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserResponseDTO create(UserRequestDTO requestDTO) {
         User user = User.builder()
                 .username(requestDTO.username())
-                .password(requestDTO.password())
+                .password(requestDTO.password()) // Crio a password
                 .build();
 
-        return convertoToDTO(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Codifico ela para colocar ela na persistência do banco de dados
+
+        userRepository.save(user);
+        var convertedUser = convertoToDTO(user);
+        return convertedUser;
     }
 
     public List<UserResponseDTO> listAll() {

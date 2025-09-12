@@ -12,20 +12,27 @@ import br.com.todolist.aws_lambda_todo.dto.TodoResponseDTO;
 import br.com.todolist.aws_lambda_todo.exception.ResourceNotFoundException;
 import br.com.todolist.aws_lambda_todo.model.Todo;
 import br.com.todolist.aws_lambda_todo.repository.TodoRepository;
+import br.com.todolist.aws_lambda_todo.repository.UserRepository;
 
 @Service
 public class TodoService {
     @Autowired
     private TodoRepository todoRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public TodoResponseDTO create(TodoRequestDTO requestDTO) {
-        Todo todo = new Todo();
-        todo.setDescription(requestDTO.description());
-        todo.setDone(requestDTO.done());
+        var user = userRepository.findById(requestDTO.user_id());
+        Todo todo = Todo.builder()
+        .description(requestDTO.description())
+        .done(requestDTO.done())
+        .user(user.get())
+        .build();
+    
         Todo savedTodo = todoRepository.save(todo);
 
         return convertToResponseDTO(savedTodo);
-
     }
 
     public List<TodoResponseDTO> listAll() {
