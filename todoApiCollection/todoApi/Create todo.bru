@@ -1,0 +1,23 @@
+meta {
+  name: Create todo
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/api/v1/todos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "description": "Tarefa muito chata",
+    "done": "false",
+    "user_id": "146c454b-f05b-4f82-9c11-7890fd8d5506"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Create User
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/api/v1/users
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "Thiago",
+    "password": "Atena2022"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
