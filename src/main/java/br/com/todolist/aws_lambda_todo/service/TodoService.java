@@ -5,12 +5,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import br.com.todolist.aws_lambda_todo.dto.TodoRequestDTO;
 import br.com.todolist.aws_lambda_todo.dto.TodoResponseDTO;
 import br.com.todolist.aws_lambda_todo.exception.ResourceNotFoundException;
 import br.com.todolist.aws_lambda_todo.model.Todo;
+import br.com.todolist.aws_lambda_todo.model.User;
 import br.com.todolist.aws_lambda_todo.repository.TodoRepository;
 import br.com.todolist.aws_lambda_todo.repository.UserRepository;
 
@@ -23,6 +25,8 @@ public class TodoService {
     private UserRepository userRepository;
 
     public TodoResponseDTO create(TodoRequestDTO requestDTO) {
+        User currentUser = getAuthenticatedUser();
+
         var user = userRepository.findById(requestDTO.user_id());
         Todo todo = Todo.builder()
         .description(requestDTO.description())
@@ -34,6 +38,15 @@ public class TodoService {
 
         return convertToResponseDTO(savedTodo);
     }
+    
+    public List<TodoResponseDTO> findAllByUser() {
+        User currentUser = getAuthenticatedUser();
+   
+        return todoRepository.findByUser_Id(currentUser.getId())
+        .stream()
+        .map(this::convertToResponseDTO)
+        .collect(Collectors.toList());
+    }
 
     public List<TodoResponseDTO> listAll() {
         return todoRepository.findAll()
@@ -43,8 +56,13 @@ public class TodoService {
     }
 
     public TodoResponseDTO update(UUID id, TodoRequestDTO todoRequestDTO) {
+        User currentUser = getAuthenticatedUser();
         Todo existingTodo = todoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com o ID: " + id));
+
+        if (!existingTodo.getUser().getId().equals(currentUser.getId())) {
+            throw new SecurityException("Acesso negado: você não é o dono deste item.");
+        }               
 
         existingTodo.setDescription(todoRequestDTO.description());
         existingTodo.setDone(todoRequestDTO.done());
@@ -53,9 +71,15 @@ public class TodoService {
     }
 
     public void delete(UUID id) {
-        if (!todoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Item não encontrado com o id: " + id);
+        User currentUser = getAuthenticatedUser();
+        Todo todoToDelete = todoRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com o id: " + id));
+
+        if (todoToDelete.getUser().getId().equals(currentUser.getId())) {
+            throw new SecurityException("Você não pode remover este item pois não é o dono dele.");
         }
+
+        todoRepository.delete(todoToDelete);
     }
 
     private TodoResponseDTO convertToResponseDTO(Todo todo) {
@@ -63,5 +87,9 @@ public class TodoService {
                 todo.getId(),
                 todo.getDescription(),
                 todo.isDone());
+    }
+
+    private User getAuthenticatedUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
