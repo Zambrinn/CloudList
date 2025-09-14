@@ -1,4 +1,4 @@
-package br.com.todolist;
+package br.com.todolist.aws_lambda_todo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +10,6 @@ import com.amazonaws.serverless.proxy.model.AwsProxyResponse;
 import com.amazonaws.serverless.proxy.spring.SpringBootLambdaContainerHandler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-
-import br.com.todolist.aws_lambda_todo.AwsLambdaTodoApplication;
 
 public class StreamLambdaHandler implements RequestStreamHandler {
     private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
