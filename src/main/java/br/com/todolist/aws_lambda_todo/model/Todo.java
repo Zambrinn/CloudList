@@ -1,17 +1,23 @@
 package br.com.todolist.aws_lambda_todo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
+
+import lombok.Getter;
 
 @Entity
 @Table(name = "todo")
 @Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
