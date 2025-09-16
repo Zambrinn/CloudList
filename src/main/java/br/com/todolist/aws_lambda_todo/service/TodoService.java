@@ -27,11 +27,10 @@ public class TodoService {
     public TodoResponseDTO create(TodoRequestDTO requestDTO) {
         User currentUser = getAuthenticatedUser();
 
-        var user = userRepository.findById(requestDTO.user_id());
         Todo todo = Todo.builder()
         .description(requestDTO.description())
         .done(requestDTO.done())
-        .user(user.get())
+        .user(currentUser)
         .build();
     
         Todo savedTodo = todoRepository.save(todo);
@@ -75,7 +74,7 @@ public class TodoService {
         Todo todoToDelete = todoRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com o id: " + id));
 
-        if (todoToDelete.getUser().getId().equals(currentUser.getId())) {
+        if (!todoToDelete.getUser().getId().equals(currentUser.getId())) {
             throw new SecurityException("Você não pode remover este item pois não é o dono dele.");
         }
 
