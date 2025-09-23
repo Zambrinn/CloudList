@@ -15,7 +15,6 @@ import lombok.Getter;
 
 @Entity
 @Table(name = "todo")
-@Data
 @Getter
 @Setter
 @Builder
