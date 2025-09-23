@@ -268,7 +268,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 **Zambrin**
 - GitHub: [@Zambrinn](https://github.com/Zambrinn)
-- LinkedIn: [Seu LinkedIn](https://linkedin.com/in/seu-perfil)
+- LinkedIn: [Thiago Zambrin](https://linkedin.com/in/thiagozambrin)
 
 ## 🙏 Agradecimentos
 
