@@ -268,14 +268,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 **Zambrin**
 - GitHub: [@Zambrinn](https://github.com/Zambrinn)
-- LinkedIn: [Seu LinkedIn](https://linkedin.com/in/seu-perfil)
-
-## 🙏 Agradecimentos
-
-- Spring Boot Team pela excelente documentação
-- AWS pela infraestrutura serverless robusta
-- Comunidade React pela evolução constante do ecossistema
-
----
+- LinkedIn: [Thiago Zambrin](https://linkedin.com/in/thiagozambrin)
 
 ⭐ **Se este projeto te ajudou, deixe uma estrela!** ⭐
