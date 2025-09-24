@@ -38,7 +38,7 @@ Resources:
           - subnet-02c61c5665291c31c  # Substitua pelos seus IDs reais
           - subnet-0c6a67cdbc7a5b635
       CodeUri: .
-      Handler: br.com.todolist.StreamLambdaHandler::handleRequest
+      Handler: br.com.todolist.aws_lambda_todo.StreamLambdaHandler::handleRequest
       Runtime: java21
       Architectures:
         - x86_64
@@ -48,9 +48,11 @@ Resources:
       # Variáveis de ambiente que serão lidas pelo application.properties
       Environment:
         Variables:
+          SPRING_PROFILES_ACTIVE: aws
           DB_URL: !Sub 'jdbc:postgresql://${DatabaseEndpoint}:5432/${DatabaseName}'
           DB_USERNAME: !Ref DatabaseUsername
           DB_PASSWORD: !Ref DatabasePassword
+          JWT_SECRET: 'minha-chave-secreta-super-segura-para-aws-lambda-123456'
       # Gatilho: define que essa função será acionada por uma API
       Events:
         ApiGatewayProxy:
